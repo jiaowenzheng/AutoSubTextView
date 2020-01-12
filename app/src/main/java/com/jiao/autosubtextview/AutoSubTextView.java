@@ -46,8 +46,6 @@ public class AutoSubTextView extends AppCompatTextView {
             TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.AutoSubTextView);
             mShowMaxLine = arr.getInt(R.styleable.AutoSubTextView_max_lines, MAX_LINE);
             arr.recycle();
-
-            Log.i("jiao"," mShowMaxLine "+mShowMaxLine);
         }
     }
 
@@ -84,7 +82,6 @@ public class AutoSubTextView extends AppCompatTextView {
                 public void onGlobalLayout() {
                     getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     measureSubText(getLayout(),type);
-                    Log.i("jiao","formatText layout ==== null ");
                 }
             });
         } else {
@@ -95,21 +92,16 @@ public class AutoSubTextView extends AppCompatTextView {
     }
 
     private void measureSubText(Layout layout, final TextView.BufferType type) {
-        Log.i("jiao","measureSubText lineCount "+layout.getLineCount());
         if (layout.getLineCount() > mShowMaxLine) {
             SpannableStringBuilder span = new SpannableStringBuilder();
             int start = layout.getLineStart(mShowMaxLine - 1);
             int end = layout.getLineVisibleEnd(mShowMaxLine - 1);
 
-            Log.i("jiao","translate line start "+start+" end "+end);
-
             TextPaint paint = getPaint();
             StringBuilder builder = new StringBuilder(ELLIPSIZE_END);
 
             float textWidth = paint.measureText(builder.toString());
-            end -= paint.breakText(mOriginalText, start, end, false, paint.measureText(builder.toString()), null)+1;
-            Log.i("jiao", " tip gravity end " + end + " textWidth " + textWidth);
-            Log.i("jiao"," tip gravity ---------- "+end);
+            end -= paint.breakText(mOriginalText, start, end, false, textWidth, null)+1;
 
             CharSequence ellipsize = mOriginalText.subSequence(0, end);
             span.append(ellipsize);
